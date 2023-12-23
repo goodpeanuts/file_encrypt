@@ -2,7 +2,7 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-23 15:24:35
  * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-23 18:33:43
+ * @LastEditTime: 2023-12-24 00:58:16
  * @FilePath: /file_encrypt/src/user_type.rs
  * @Description: 
  * 
@@ -64,5 +64,6 @@ const USER_ACCESS_E_CONSTANT: UserAccessE = UserAccessE {
 pub struct Account {
     pub username: String,
     pub password: String,
+    pub salt: String,
     pub level: String,
 }

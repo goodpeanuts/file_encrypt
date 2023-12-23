@@ -2,13 +2,13 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-22 23:06:16
  * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 00:02:19
+ * @LastEditTime: 2023-12-24 01:12:27
  * @FilePath: /file_encrypt/src/main.rs
  * @Description: 
  * 
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
  */
-use file_encrypt::{newfile, cbc, rsa1, users_db_operate, users_db_connect};
+use file_encrypt::{newfile, cbc, rsa1, users_db_operate, users_db_connect, hash};
 
 fn main() {
     let mut test_mode = String::new();
@@ -20,6 +20,7 @@ fn main() {
     println!("5 delete user");
     println!("6 update user");
     println!("7 show users");
+    println!("8 hash test");
     
     std::io::stdin().read_line(&mut test_mode).unwrap();
     match test_mode.trim() {
@@ -44,6 +45,12 @@ fn main() {
         "7" => {
             users_db_connect::show_users();
         },
+        "8" => {
+            hash::test();
+        },
+        "9" => {
+            users_db_operate::login();
+        }
         _ => {
             println!("no such mode");
         } 

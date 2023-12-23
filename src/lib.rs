@@ -2,7 +2,7 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-22 23:06:16
  * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-23 19:35:18
+ * @LastEditTime: 2023-12-24 00:38:01
  * @FilePath: /file_encrypt/src/lib.rs
  * @Description: 
  * 
@@ -14,3 +14,4 @@ pub mod rsa1;
 pub mod users_db_operate;
 pub mod user_type;
 pub mod users_db_connect;
+pub mod hash;
