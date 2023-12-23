@@ -8,4 +8,6 @@ edition = "2021"
 [dependencies]
 rust-crypto = "0.2.36"
 rand = "0.8.4"
-base64 = "0.13.0"
+rsa = "0.9.6"
+serde_json = "1.0.108"
+serde = { version = "1.0", features = ["derive"] }
