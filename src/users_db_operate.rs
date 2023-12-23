@@ -2,7 +2,7 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-23 13:18:29
  * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 01:16:57
+ * @LastEditTime: 2023-12-24 01:21:05
  * @FilePath: /file_encrypt/src/users_db_operate.rs
  * @Description: 用户管理
  *
@@ -24,7 +24,6 @@ pub fn input_user (users: &Vec<Account>) -> Account {
     let mut username = String::new();
     let mut password = String::new();
     let mut level = String::new();
-    let mut salt = String::new();
 
     println!("input username: ");
     std::io::stdin().read_line(&mut username).unwrap();
@@ -40,7 +39,7 @@ pub fn input_user (users: &Vec<Account>) -> Account {
     std::io::stdin().read_line(&mut password).unwrap();
 
     // 生成随机数, 用于加盐
-    salt = format!("{}{}{}", &username.trim(), rand::random::<u32>().to_string(), &username.trim());
+    let salt = format!("{}{}{}", &username.trim(), rand::random::<u32>().to_string(), &username.trim());
     println!("salt: {}", salt);
 
     // 创建 SHA-256 哈希算法实例

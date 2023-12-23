@@ -2,7 +2,7 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-23 19:57:47
  * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 00:20:43
+ * @LastEditTime: 2023-12-24 03:26:03
  * @FilePath: /file_encrypt/src/cbc.rs
  * @Description:
  *
@@ -15,6 +15,7 @@ use std::io::Seek;
 use std::io::SeekFrom;
 use std::io::{Read, Write};
 use std::time::Instant;
+use rand::Rng;
 // use crypto::aessafe::*;
 // use crypto::blockmodes::*;
 // use crypto::symmetriccipher::*;
@@ -169,7 +170,7 @@ pub fn aes_cbc_encrypt(input: &[u8], keysize: aes::KeySize, key: &[u8], iv: &[u8
 }
 
 // Decrypts a buffer with the given key and iv using AES-256/CBC/Pkcs encryption.
-pub fn aes_cbc_decrypt(input: &mut [u8], keysize: aes::KeySize, key: &[u8], iv: &[u8]) -> Vec<u8> {
+pub fn aes_cbc_decrypt(input: & [u8], keysize: aes::KeySize, key: &[u8], iv: &[u8]) -> Vec<u8> {
     let mut decryptor = aes::cbc_decryptor(keysize, key, iv, blockmodes::PkcsPadding);
     let input_size = input.len();
     let mut input_buffer = buffer::RefReadBuffer::new(&input);
@@ -181,4 +182,13 @@ pub fn aes_cbc_decrypt(input: &mut [u8], keysize: aes::KeySize, key: &[u8], iv: 
         .unwrap();
 
     output_buffer.take_read_buffer().take_remaining().to_vec()
+}
+
+pub fn generate_aes256_key() -> Vec<u8> {
+    let mut rng = rand::thread_rng();
+    let mut key = vec![0; 32];
+    for i in 0..key.len() {
+        key[i] = rng.gen::<u8>();
+    }
+    key
 }
