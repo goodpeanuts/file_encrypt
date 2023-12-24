@@ -1,9 +1,9 @@
 /*
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-22 23:06:16
- * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 12:50:02
- * @FilePath: /file_encrypt/src/lib.rs
+ * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
+ * @LastEditTime: 2023-12-24 17:43:57
+ * @FilePath: \file-cryption\src\lib.rs
  * @Description: 
  * 
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
@@ -17,4 +17,10 @@ pub mod users_db_connect;
 pub mod hash;
 pub mod file;
 pub mod pem;
-pub mod user_state;
+pub mod state_user;
+pub mod state_nav;
+pub mod app;
+pub mod view_login;
+pub mod view_home;
+pub mod view_side_bar;
+pub mod config_font;

@@ -1,9 +1,9 @@
 /*
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-23 18:36:00
- * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 15:25:09
- * @FilePath: /file_encrypt/src/users_db_connect.rs
+ * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
+ * @LastEditTime: 2023-12-24 22:14:18
+ * @FilePath: \file-cryption\src\users_db_connect.rs
  * @Description: 用于打开以及加密和解密的用户信息文件
  * 
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
@@ -17,20 +17,21 @@ use crate::{user_account::Account, users_db_operate, cbc};
 const KEY256: &[u8] = b"0123456789abcdef0123456789abcdef"; // 用于256的测试密钥
 const IV: &[u8] = b"0123456789abcdef";
 
-// 当用户信息文件不存在时，创建用户信息文件
-pub fn create_database() -> Vec<Account> {
-    let mut users: Vec<Account> = Vec::new();
-    let mut count = String::new();
+// gui 中需要重写
+// 当用户信息文件不存在时，创建用户信息文件 
+// pub fn create_database(count: i32) -> Vec<Account> {
+//     let mut users: Vec<Account> = Vec::new();
+//     let mut count = String::new();
 
-    println!("input users number: ");
-    std::io::stdin().read_line(&mut count).unwrap();
+//     println!("input users number: ");
+//     std::io::stdin().read_line(&mut count).unwrap();
 
-    for _i in 0..count.trim().parse::<i32>().unwrap() {
-        let user = users_db_operate::input_user(&users);
-        users.push(user);
-    }
-    users
-}
+//     for _i in 0..count.trim().parse::<i32>().unwrap() {
+//         let user = users_db_operate::input_user(&users);
+//         users.push(user);
+//     }
+//     users
+// }
 
 pub fn read_from_database() -> Vec<Account> {
     // 打开文件并读取内容
@@ -56,7 +57,8 @@ pub fn read_from_database() -> Vec<Account> {
             println!("!! open users database failed !!");    // for test
             println!();    // for test
             println!("== create new users database ==");    // for test
-            let users = create_database();
+            // let users = create_database();   // 暂时返回空数组
+            let users = vec![];
             print_users(&users);    // for test
             users
         }

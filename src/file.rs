@@ -1,9 +1,9 @@
 /*
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-24 01:24:32
- * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 15:13:32
- * @FilePath: /file_encrypt/src/file.rs
+ * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
+ * @LastEditTime: 2023-12-24 23:30:54
+ * @FilePath: \file-cryption\src\file.rs
  * @Description:
  *
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved.
@@ -55,13 +55,24 @@ pub fn encrypt_file(filename: &str) {
     file.write_all(json.unwrap().as_bytes()).unwrap();
 }
 
-pub fn decrypt_file(filename: &str, key: &str) {
+pub fn decrypt_file(filename: &str, key: &str) -> Result<String, String> {
     let file = std::fs::File::open(filename);
     match file {
         Ok(file) => {
-            let encrypted_file: EncryptedFile = serde_json::from_reader(file).unwrap();
-            let priv_key =
-                RsaPrivateKey::from_pkcs1_pem(key).expect("failed to convert to pem");
+            let encrypted_file: EncryptedFile;
+            match serde_json::from_reader(file) {
+                Ok(c) => encrypted_file = c,
+                Err(_) => {
+                    return Err("文件解析失败".to_string());
+                }
+            }
+            let priv_key;
+             match RsaPrivateKey::from_pkcs1_pem(key) {
+                Ok(c) => priv_key = c,
+                Err(_) => {
+                    return Err("私钥获取失败".to_string());
+                }
+             }
             let fek = priv_key
                 .decrypt(Pkcs1v15Encrypt, &encrypted_file.ddf)
                 .expect("failed to decrypt");
@@ -71,21 +82,20 @@ pub fn decrypt_file(filename: &str, key: &str) {
                 &fek,
                 IV,
             );
-            let mut file = File::create("plain.txt").unwrap();
-            file.write_all(&data).unwrap();
+            return Ok(String::from_utf8(data).unwrap());
         }
         Err(_) => {
-            println!("open failed"); // for test
+            return Err("文件打开失败".to_string()); // for test
         }
     }
 }
-pub fn recover_file (filename: &str) {
+pub fn recover_file(filename: &str) {
     let file = std::fs::File::open(filename);
     match file {
         Ok(file) => {
             let encrypted_file: EncryptedFile = serde_json::from_reader(file).unwrap();
-            let priv_key =
-                RsaPrivateKey::from_pkcs1_pem(pem::PRIV_KEY_ROOT).expect("failed to convert to pem");
+            let priv_key = RsaPrivateKey::from_pkcs1_pem(pem::PRIV_KEY_ROOT)
+                .expect("failed to convert to pem");
             let fek = priv_key
                 .decrypt(Pkcs1v15Encrypt, &encrypted_file.drf)
                 .expect("failed to decrypt");
