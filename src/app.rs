@@ -3,7 +3,7 @@ use crate::file::decrypt_file;
  * @Author: goodpeanuts goodpeanuts@foxmail.com
  * @Date: 2023-12-24 16:11:40
  * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-25 02:37:02
+ * @LastEditTime: 2023-12-25 03:44:59
  * @FilePath: \file-cryption\src\app.rs
  * @Description: 程序图形化界面主体
  *
@@ -101,8 +101,9 @@ impl App {
                 }
             }
         }
-        self.is_file_read_window_open = vec![false; self.files.len()];
-        self.file_content.resize(self.files.len(), "".to_string());
+        for file in &self.files {
+            println!("{}", file);
+        }
         Ok(())
     }
 
@@ -116,64 +117,7 @@ impl App {
                 .constrain(true)
                 .collapsible(false)
                 .movable(true)
-                .show(ctx, |ui: &mut egui::Ui| {
-                    ui.add_space(20.0);
-                    // ui.add_sized(egui::vec2(200.0, 24.0), egui::Label::new(&self.all_users[index].username));
-                    ui.add_sized(
-                        [200.0, 24.0],
-                        egui::Label::new(format!("{}{}", "👤  ", self.all_users[index].level)),
-                    );
-                    ui.add_space(20.0);
-                    ui.add_sized(
-                        egui::vec2(200.0, 24.0),
-                        egui::TextEdit::singleline(&mut self.input_username).hint_text("账号"),
-                    );
-                    ui.add_space(10.0);
-                    ui.add_sized(
-                        egui::vec2(200.0, 24.0),
-                        egui::TextEdit::singleline(&mut self.input_password)
-                            .hint_text("密码")
-                            .password(true),
-                    );
-                    ui.add_space(10.0);
-                    ui.add_sized(
-                        egui::vec2(200.0, 24.0),
-                        egui::TextEdit::singleline(&mut self.input_level).hint_text("用户等级"),
-                    );
-                    ui.add_space(10.0);
-                    let resp_modify = ui
-                        .add_sized(
-                            [200.0, 32.0],
-                            egui::Button::new(egui::RichText::new("修改").size(16.0)),
-                        )
-                        .clicked();
-                    if self.is_error {
-                        ui.label(
-                            egui::RichText::new(&self.error_message)
-                                .color(egui::Color32::RED),
-                        );
-                    }
-                    if resp_modify {
-                        match users_db_operate::update_user(
-                            &self.input_username,
-                            &self.input_password,
-                            &self.input_level,
-                            &self.all_users[index].username,
-                        ) {
-                            Ok(_) => {
-                                self.is_error = false;
-                                self.input_username.clear();
-                                self.input_password.clear();
-                                self.input_level.clear();
-                                self.all_users = users_db_operate::get_all_users();
-                            }
-                            Err(e) => {
-                                self.is_error = true;
-                                self.error_message = e.clone();
-                            }
-                        }
-                    }
-                });
+                .show(ctx, |ui| {});
         }
     }
 
