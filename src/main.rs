@@ -2,19 +2,14 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-22 23:06:16
  * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 19:07:39
+ * @LastEditTime: 2023-12-25 02:36:35
  * @FilePath: \file-cryption\src\main.rs
  * @Description:
  *
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved.
  */
 use eframe::egui;
-use file_encrypt::{
-    app, cbc, create_file, file, hash, pem, rsa1,
-    state_user::{self, get_priv_key, State},
-    user_account::Account,
-    users_db_connect, users_db_operate,
-};
+use file_encrypt::app;
 
 fn main() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions {
@@ -23,15 +18,8 @@ fn main() -> Result<(), eframe::Error> {
         hardware_acceleration: eframe::HardwareAcceleration::Required, // 设置是否使用硬件加速
         ..Default::default()                                  // 使用其他默认选项
     };
-    // eframe::run_native(
-    //     "puzzle",
-    //     eframe::NativeOptions::default(),
-    //     Box::new(|cc| Box::new(game::GameApp::new(|c|{
-
-    //     }))),
-    // )
     eframe::run_native(
-        "WHO IS GOODPEANUTS",
+        "分级权限管理程序",
         options,
         Box::new(|cc| Box::new(app::App::new(cc))),
     )
@@ -46,24 +34,24 @@ fn main() -> Result<(), eframe::Error> {
 // fn cmd_test() {
 //     let mut user: State;
 //     println!("{}", WELCOME_MESSGAGE);
-    // match user_state::login() {
-    //     Some(u) => {
-    //         user = State {
-    //             account: u.clone(),
-    //             priv_key: get_priv_key(&u.level),
-    //         };
-    //         println!("login success");
-    //         println!("user: {}", u.username);
-    //         println!("level: {}", u.level);
-    //         for i in &user.priv_key {
-    //             println!("{}", i);
-    //         }
-    //     }
-    //     None => {
-    //         println!("login failed");
-    //         return;
-    //     }
-    // }
+// match user_state::login() {
+//     Some(u) => {
+//         user = State {
+//             account: u.clone(),
+//             priv_key: get_priv_key(&u.level),
+//         };
+//         println!("login success");
+//         println!("user: {}", u.username);
+//         println!("level: {}", u.level);
+//         for i in &user.priv_key {
+//             println!("{}", i);
+//         }
+//     }
+//     None => {
+//         println!("login failed");
+//         return;
+//     }
+// }
 // }
 
 // fn test() {

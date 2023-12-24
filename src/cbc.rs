@@ -1,10 +1,10 @@
 /*
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-23 19:57:47
- * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 03:26:03
- * @FilePath: /file_encrypt/src/cbc.rs
- * @Description:
+ * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
+ * @LastEditTime: 2023-12-25 02:21:27
+ * @FilePath: \file-cryption\src\cbc.rs
+ * @Description: 测试cbc加密解密， 向外提供加密解密函数
  *
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved.
  */
@@ -16,11 +16,6 @@ use std::io::SeekFrom;
 use std::io::{Read, Write};
 use std::time::Instant;
 use rand::Rng;
-// use crypto::aessafe::*;
-// use crypto::blockmodes::*;
-// use crypto::symmetriccipher::*;
-// use crypto::aes::*;
-// use std::vec;
 
 // 指定固定的密钥和IV，实际应用中需要使用安全的随机生成的密钥和IV
 const KEY256: &[u8] = b"0123456789abcdef0123456789abcdef"; // 用于256的测试密钥

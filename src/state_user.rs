@@ -2,14 +2,14 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-24 12:39:21
  * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 19:15:05
+ * @LastEditTime: 2023-12-25 02:25:50
  * @FilePath: \file-cryption\src\state_user.rs
- * @Description: 
+ * @Description: 图形化程序的用户状态
  * 
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
  */
 use crate::user_account::{Account, self};
-use crate::{users_db_connect::{read_from_database, save_to_database}, users_db_operate::user_exist, pem};
+use crate::{users_db_connect::read_from_database, users_db_operate::user_exist, pem};
 use crypto::{digest::Digest, sha2::Sha256};
 
 pub struct State {
@@ -22,7 +22,6 @@ pub fn login(input_username: &String, input_password: &String) -> Option<Account
 
     // 判断是否存在
     if !user_exist(&users, &input_username.trim().to_string()) {
-        println!("user not exist");
         return None;
     }
 
@@ -37,7 +36,6 @@ pub fn login(input_username: &String, input_password: &String) -> Option<Account
                 level: "A".to_string(),
             });
         } else {
-            println!("login failed");
             return None;
         }
     }
@@ -59,10 +57,7 @@ pub fn login(input_username: &String, input_password: &String) -> Option<Account
     hasher.input_str(&format!("{}{}", &input_password.trim(), salt));
     
     if hasher.result_str() == password {
-        println!("login success");
         return account;
-    } else {
-        println!("login failed");
     }
     None
 }
@@ -89,7 +84,6 @@ pub fn get_priv_key(level: &str) -> Vec<String> {
             keys.push(pem::PRIV_KEY_D.to_string());
         }
         _ => {
-            println!("level error");
         }
     }
     keys

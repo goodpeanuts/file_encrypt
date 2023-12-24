@@ -2,9 +2,9 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-24 01:24:32
  * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 23:30:54
+ * @LastEditTime: 2023-12-25 02:24:09
  * @FilePath: \file-cryption\src\file.rs
- * @Description:
+ * @Description: 使用随机生成的aes256密钥对文件内容的加密解密，使用公钥密码实现对文件fek， ddf， drf， 
  *
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved.
  */
@@ -16,6 +16,7 @@ use rsa::{Pkcs1v15Encrypt, RsaPrivateKey, RsaPublicKey};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::prelude::*;
+use std::path::PathBuf;
 
 // 指定固定的密钥和IV，实际应用中需要使用安全的随机生成的密钥和IV
 const IV: &[u8] = b"0123456789abcdef";
@@ -56,26 +57,32 @@ pub fn encrypt_file(filename: &str) {
 }
 
 pub fn decrypt_file(filename: &str, key: &str) -> Result<String, String> {
-    let file = std::fs::File::open(filename);
+    let mut path = PathBuf::from("ciphertext");
+    path.push(filename);
+    let file = std::fs::File::open(path);
     match file {
         Ok(file) => {
             let encrypted_file: EncryptedFile;
             match serde_json::from_reader(file) {
                 Ok(c) => encrypted_file = c,
                 Err(_) => {
-                    return Err("文件解析失败".to_string());
+                    return Err("不是加密文件".to_string());
                 }
             }
             let priv_key;
-             match RsaPrivateKey::from_pkcs1_pem(key) {
+            match RsaPrivateKey::from_pkcs1_pem(key) {
                 Ok(c) => priv_key = c,
                 Err(_) => {
-                    return Err("私钥获取失败".to_string());
+                    return Err("无权限访问".to_string());
                 }
-             }
-            let fek = priv_key
-                .decrypt(Pkcs1v15Encrypt, &encrypted_file.ddf)
-                .expect("failed to decrypt");
+            }
+            let fek;
+            match priv_key.decrypt(Pkcs1v15Encrypt, &encrypted_file.ddf) {
+                Ok(c) => fek = c,
+                Err(_) => {
+                    return Err("无权限访问".to_string());
+                }
+            }
             let data = cbc::aes_cbc_decrypt(
                 &encrypted_file.encrypted_data,
                 aes::KeySize::KeySize256,
@@ -89,27 +96,43 @@ pub fn decrypt_file(filename: &str, key: &str) -> Result<String, String> {
         }
     }
 }
-pub fn recover_file(filename: &str) {
-    let file = std::fs::File::open(filename);
+pub fn recover_file(filename: &str) -> Result<String, String> {
+    let mut path = PathBuf::from("ciphertext");
+    path.push(filename);
+    let file = std::fs::File::open(path);
     match file {
         Ok(file) => {
-            let encrypted_file: EncryptedFile = serde_json::from_reader(file).unwrap();
-            let priv_key = RsaPrivateKey::from_pkcs1_pem(pem::PRIV_KEY_ROOT)
-                .expect("failed to convert to pem");
-            let fek = priv_key
-                .decrypt(Pkcs1v15Encrypt, &encrypted_file.drf)
-                .expect("failed to decrypt");
+            let encrypted_file: EncryptedFile;
+            match serde_json::from_reader(file) {
+                Ok(c) => encrypted_file = c,
+                Err(_) => {
+                    return Err("不是加密文件".to_string());
+                }
+            }
+            let priv_key;
+            match RsaPrivateKey::from_pkcs1_pem(pem::PRIV_KEY_ROOT) {
+                Ok(c) => priv_key = c,
+                Err(_) => {
+                    return Err("无权限访问".to_string());
+                }
+            }
+            let fek;
+            match priv_key.decrypt(Pkcs1v15Encrypt, &encrypted_file.drf) {
+                Ok(c) => fek = c,
+                Err(_) => {
+                    return Err("无权限访问".to_string());
+                }
+            }
             let data = cbc::aes_cbc_decrypt(
                 &encrypted_file.encrypted_data,
                 aes::KeySize::KeySize256,
                 &fek,
                 IV,
             );
-            let mut file = File::create("recover.txt").unwrap();
-            file.write_all(&data).unwrap();
+            return Ok(String::from_utf8(data).unwrap());
         }
-        Err(_) => {
-            println!("open failed"); // for test
+        Err(e) => {
+            return Err(e.to_string()); // for test
         }
     }
 }

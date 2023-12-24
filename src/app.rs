@@ -1,18 +1,19 @@
+use crate::file::decrypt_file;
 /*
  * @Author: goodpeanuts goodpeanuts@foxmail.com
  * @Date: 2023-12-24 16:11:40
  * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 23:19:36
+ * @LastEditTime: 2023-12-25 02:37:02
  * @FilePath: \file-cryption\src\app.rs
- * @Description:
+ * @Description: 程序图形化界面主体
  *
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved.
  */
-use crate::{config_font, state_nav, state_user, user_account, users_db_operate};
+use crate::{config_font, file, state_nav, state_user, user_account, users_db_operate};
 // use crate::{view_side_bar, view_login, state_nav::NavState, state_user::State};
 use eframe::egui;
-use std::fs;
 use std::path::Path;
+use std::{fs, vec};
 pub struct App {
     pub user: state_user::State,
     pub all_users: Vec<user_account::Account>,
@@ -28,6 +29,7 @@ pub struct App {
     pub adduser: bool,
     pub files: Vec<String>,
     pub is_file_read_window_open: Vec<bool>,
+    pub file_content: Vec<String>,
 }
 
 impl App {
@@ -56,6 +58,7 @@ impl App {
             adduser: false,
             files: vec![],
             is_file_read_window_open: vec![],
+            file_content: vec![],
         }
     }
 
@@ -80,10 +83,11 @@ impl App {
         self.adduser = false;
         self.files = vec![];
         self.is_file_read_window_open = vec![];
+        self.file_content = vec![];
     }
 
     pub fn read_filenames_in_dir(&mut self) -> std::io::Result<()> {
-        let dir = Path::new("resources");
+        let dir = Path::new("ciphertext");
         if dir.is_dir() {
             for entry in fs::read_dir(dir)? {
                 let entry = entry?;
@@ -97,14 +101,13 @@ impl App {
                 }
             }
         }
-        for file in &self.files {
-            println!("{}", file);
-        }
+        self.is_file_read_window_open = vec![false; self.files.len()];
+        self.file_content.resize(self.files.len(), "".to_string());
         Ok(())
     }
 
     // 修改用户
-    fn modify_user(&mut self, ctx: &egui::Context, ui: &mut egui::Ui) {
+    fn modify_user(&mut self, ctx: &egui::Context) {
         for (index, is_open) in self.is_user_modify_window_open.iter_mut().enumerate() {
             egui::Window::new(self.all_users[index].username.clone())
                 .title_bar(true)
@@ -113,12 +116,69 @@ impl App {
                 .constrain(true)
                 .collapsible(false)
                 .movable(true)
-                .show(ctx, |ui| {});
+                .show(ctx, |ui: &mut egui::Ui| {
+                    ui.add_space(20.0);
+                    // ui.add_sized(egui::vec2(200.0, 24.0), egui::Label::new(&self.all_users[index].username));
+                    ui.add_sized(
+                        [200.0, 24.0],
+                        egui::Label::new(format!("{}{}", "👤  ", self.all_users[index].level)),
+                    );
+                    ui.add_space(20.0);
+                    ui.add_sized(
+                        egui::vec2(200.0, 24.0),
+                        egui::TextEdit::singleline(&mut self.input_username).hint_text("账号"),
+                    );
+                    ui.add_space(10.0);
+                    ui.add_sized(
+                        egui::vec2(200.0, 24.0),
+                        egui::TextEdit::singleline(&mut self.input_password)
+                            .hint_text("密码")
+                            .password(true),
+                    );
+                    ui.add_space(10.0);
+                    ui.add_sized(
+                        egui::vec2(200.0, 24.0),
+                        egui::TextEdit::singleline(&mut self.input_level).hint_text("用户等级"),
+                    );
+                    ui.add_space(10.0);
+                    let resp_modify = ui
+                        .add_sized(
+                            [200.0, 32.0],
+                            egui::Button::new(egui::RichText::new("修改").size(16.0)),
+                        )
+                        .clicked();
+                    if self.is_error {
+                        ui.label(
+                            egui::RichText::new(&self.error_message)
+                                .color(egui::Color32::RED),
+                        );
+                    }
+                    if resp_modify {
+                        match users_db_operate::update_user(
+                            &self.input_username,
+                            &self.input_password,
+                            &self.input_level,
+                            &self.all_users[index].username,
+                        ) {
+                            Ok(_) => {
+                                self.is_error = false;
+                                self.input_username.clear();
+                                self.input_password.clear();
+                                self.input_level.clear();
+                                self.all_users = users_db_operate::get_all_users();
+                            }
+                            Err(e) => {
+                                self.is_error = true;
+                                self.error_message = e.clone();
+                            }
+                        }
+                    }
+                });
         }
     }
 
     // 添加用户
-    fn add_user(&mut self, ctx: &egui::Context, ui: &mut egui::Ui) {
+    fn add_user(&mut self, ctx: &egui::Context) {
         egui::Window::new("添加用户")
             .title_bar(true)
             .default_pos([500.0, 200.0])
@@ -151,7 +211,7 @@ impl App {
                     ui.label(egui::RichText::new(&self.error_message).color(egui::Color32::RED));
                 }
                 ui.add_space(10.0);
-                let mut resp_add = ui
+                let resp_add = ui
                     .add_sized(
                         [200.0, 32.0],
                         egui::Button::new(egui::RichText::new("添加").size(16.0)),
@@ -165,25 +225,22 @@ impl App {
                     ) {
                         Ok(_) => {
                             self.is_error = false;
-                            println!("add user success");
                             self.input_username.clear();
                             self.input_password.clear();
                             self.input_level.clear();
                             self.all_users = users_db_operate::get_all_users();
-                            println!("all users: {:}", self.all_users.len());
                             self.is_user_modify_window_open.push(false);
                         }
                         Err(e) => {
                             self.is_error = true;
                             self.error_message = e.clone();
-                            println!("{}", e);
                             ui.label(egui::RichText::new(e).color(egui::Color32::RED));
                         }
                     }
                 }
             });
     }
-    fn show_file(&mut self, ctx: &egui::Context, ui: &mut egui::Ui) {
+    fn show_file(&mut self, ctx: &egui::Context) {
         for (index, is_open) in self.is_file_read_window_open.iter_mut().enumerate() {
             egui::Window::new(self.files[index].clone())
                 .title_bar(true)
@@ -192,7 +249,45 @@ impl App {
                 .constrain(true)
                 .collapsible(false)
                 .movable(true)
-                .show(ctx, |ui| {});
+                .show(ctx, |ui| {
+                    if self.file_content[index] == "".to_string() {
+                        if self.user.account.level == "A" {
+                            match file::recover_file(&self.files[index]) {
+                                Ok(c) => self.file_content[index] = c,
+                                Err(e) => {
+                                    self.file_content[index] = e.clone().to_string();
+                                }
+                            }
+                        } else {
+                            for k in self.user.priv_key.iter() {
+                                match decrypt_file(&self.files[index], k) {
+                                    Ok(c) => self.file_content[index] = c,
+                                    Err(e) => {
+                                        self.file_content[index] = e.clone().to_string();
+                                    }
+                                }
+                                if self.file_content[index] != "无权限访问".to_string() {
+                                    break;
+                                }
+                            }
+                        }
+                    };
+
+                    if "无权限访问".to_string() != self.file_content[index] {
+                        ui.add_space(20.0);
+                        ui.add_sized(
+                            egui::vec2(320.0, 24.0),
+                            egui::TextEdit::multiline(&mut self.file_content[index])
+                                .interactive(false),
+                        );
+                    } else {
+                        ui.label(
+                            egui::RichText::new(&self.file_content[index])
+                                .color(egui::Color32::RED)
+                                .size(18.0),
+                        );
+                    }
+                });
         }
     }
 }
@@ -209,8 +304,9 @@ impl eframe::App for App {
                 // if !self.game_state.end && self.game_state.bot {
                 //     self.recover();
                 // }
-                self.modify_user(ctx, ui);
-                self.add_user(ctx, ui);
+                self.modify_user(ctx);
+                self.add_user(ctx);
+                self.show_file(ctx);
             }
         });
     }
