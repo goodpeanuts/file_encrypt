@@ -2,7 +2,7 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-23 18:36:00
  * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 00:30:02
+ * @LastEditTime: 2023-12-24 15:25:09
  * @FilePath: /file_encrypt/src/users_db_connect.rs
  * @Description: 用于打开以及加密和解密的用户信息文件
  * 
@@ -11,14 +11,14 @@
 use std::io::{Read, Write};
 use crypto::aes;
 
-use crate::{user_type::Account, users_db_operate, cbc};
+use crate::{user_account::Account, users_db_operate, cbc};
 
 // 指定固定的密钥和IV，实际应用中需要使用安全的随机生成的密钥和IV
 const KEY256: &[u8] = b"0123456789abcdef0123456789abcdef"; // 用于256的测试密钥
 const IV: &[u8] = b"0123456789abcdef";
 
 // 当用户信息文件不存在时，创建用户信息文件
-pub fn create() -> Vec<Account> {
+pub fn create_database() -> Vec<Account> {
     let mut users: Vec<Account> = Vec::new();
     let mut count = String::new();
 
@@ -32,7 +32,7 @@ pub fn create() -> Vec<Account> {
     users
 }
 
-pub fn open_account_databases() -> Vec<Account> {
+pub fn read_from_database() -> Vec<Account> {
     // 打开文件并读取内容
     let file = std::fs::File::open("users.json");
     match file {
@@ -56,7 +56,7 @@ pub fn open_account_databases() -> Vec<Account> {
             println!("!! open users database failed !!");    // for test
             println!();    // for test
             println!("== create new users database ==");    // for test
-            let users = create();
+            let users = create_database();
             print_users(&users);    // for test
             users
         }
@@ -64,7 +64,7 @@ pub fn open_account_databases() -> Vec<Account> {
 }
 
 
-pub fn close_account_databases(users: &Vec<Account>) {
+pub fn save_to_database(users: &Vec<Account>) {
     // 将用户数组转换为json字符串
     let plaintext = serde_json::to_string_pretty(&users).unwrap();
     let plaintext = plaintext.as_bytes();
@@ -85,7 +85,7 @@ pub fn close_account_databases(users: &Vec<Account>) {
 
 // for test 查看明文的用户信息
 pub fn show_users() {
-    let users = open_account_databases();
+    let users = read_from_database();
     // 保存到新文件
     let mut file = std::fs::File::create("users_decrypt.json").unwrap();
     let json = serde_json::to_string_pretty(&users).unwrap();

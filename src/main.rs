@@ -2,15 +2,49 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-22 23:06:16
  * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 03:17:53
+ * @LastEditTime: 2023-12-24 15:54:36
  * @FilePath: /file_encrypt/src/main.rs
- * @Description: 
- * 
- * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
+ * @Description:
+ *
+ * Copyright (c) 2023 by goodpeanuts, All Rights Reserved.
  */
-use file_encrypt::{create_file, cbc, rsa1, users_db_operate, users_db_connect, hash, file};
+use file_encrypt::{
+    cbc, create_file, file, hash, pem, rsa1,
+    user_state::{self, get_priv_key, State},
+    user_account::Account,
+    users_db_connect, users_db_operate,
+};
 
 fn main() {
+    // test();
+
+    cmd_test();
+}
+
+fn cmd_test() {
+    let mut user: State;
+    println!("{}", WELCOME_MESSGAGE);
+    match user_state::login() {
+        Some(u) => {
+            user = State {
+                account: u.clone(),
+                priv_key: get_priv_key(&u.level),
+            };
+            println!("login success");
+            println!("user: {}", u.username);
+            println!("level: {}", u.level);
+            for i in &user.priv_key {
+                println!("{}", i);
+            }
+        }
+        None => {
+            println!("login failed");
+            return;
+        }
+    }
+}
+
+fn test() {
     let mut test_mode = String::new();
     println!("select run mode: ");
     println!("0 test rsa");
@@ -25,46 +59,67 @@ fn main() {
     println!("9 login");
     println!("10 encrypt file");
     println!("11 decrypt file");
-    
+    println!("12 recover file");
+
     std::io::stdin().read_line(&mut test_mode).unwrap();
     match test_mode.trim() {
         "0" => {
             rsa1::test();
-        },
+        }
         "1" => {
             create_file::create_file();
-        },
-        "2"  => {
+        }
+        "2" => {
             cbc::speedtest();
-        },
+        }
         "3" => {
             rsa1::main();
-        },
+        }
         "4" => {
             users_db_operate::add_user();
-        },
+        }
         "5" => {
             users_db_operate::delete_user();
-        },
+        }
         "6" => {
             users_db_operate::update_user();
-        },
+        }
         "7" => {
             users_db_connect::show_users();
-        },
+        }
         "8" => {
             hash::test();
-        },
+        }
         "9" => {
-            users_db_operate::login();
+            user_state::login();
         }
         "10" => {
-            file::encrypt_file("file.txt");
+            file::encrypt_file("resources/10e");
         }
         "11" => {
-            file::decrypt_file("good.txt");}
+            file::decrypt_file("10e.txt", pem::PRIV_KEY_E);
+        }
+        "12" => {
+            file::recover_file("1a.txt");
+        }
         _ => {
             println!("no such mode");
-        } 
+        }
     }
 }
+
+const WELCOME_MESSGAGE: &str = r#"
+    Welcome to file encrypt system
+    0 test rsa
+    1 newfile for cbc speed test
+    2 cbc speedtest
+    3 rsa
+    4 add user
+    5 delete user
+    6 update user
+    7 show users
+    8 hash test
+    9 login
+    10 encrypt file
+    11 decrypt file
+    "#;
