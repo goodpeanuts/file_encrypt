@@ -2,13 +2,13 @@
  * @Author: goodpeanuts goodpeanuts@foxmail.com
  * @Date: 2023-12-24 16:25:47
  * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 21:34:38
+ * @LastEditTime: 2023-12-25 02:27:11
  * @FilePath: \file-cryption\src\view_side_bar.rs
- * @Description:
+ * @Description:    侧边栏
  *
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved.
  */
-use crate::{app::App, state_nav, users_db_operate};
+use crate::app::App;
 use eframe::egui;
 
 impl App {
@@ -65,10 +65,7 @@ impl App {
 
                         ui.add_space(10.0);
                         let resp = ui
-                            .add_sized(
-                                [200.0, 25.0],
-                                egui::Button::new("添加新用户"),
-                            )
+                            .add_sized([200.0, 25.0], egui::Button::new("添加新用户"))
                             .clicked();
                         if resp {
                             // 如果按钮被点击，切换窗口状态

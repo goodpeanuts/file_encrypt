@@ -1,10 +1,10 @@
 /*
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-24 00:36:27
- * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 00:54:14
- * @FilePath: /file_encrypt/src/hash.rs
- * @Description: 
+ * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
+ * @LastEditTime: 2023-12-25 02:24:35
+ * @FilePath: \file-cryption\src\hash.rs
+ * @Description: 测试hash函数
  * 
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
  */

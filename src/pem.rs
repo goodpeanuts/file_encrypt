@@ -1,10 +1,10 @@
 /*
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-24 02:08:27
- * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 02:38:26
- * @FilePath: /file_encrypt/src/pem.rs
- * @Description: 
+ * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
+ * @LastEditTime: 2023-12-25 02:25:03
+ * @FilePath: \file-cryption\src\pem.rs
+ * @Description: 存放公钥私钥
  * 
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
  */

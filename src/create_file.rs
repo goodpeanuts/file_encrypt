@@ -1,10 +1,10 @@
 /*
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-22 23:06:16
- * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 01:22:21
- * @FilePath: /file_encrypt/src/create_file.rs
- * @Description: 
+ * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
+ * @LastEditTime: 2023-12-25 02:22:30
+ * @FilePath: \file-cryption\src\create_file.rs
+ * @Description: 创建一个用于测试cbc加密解密的文件
  * 
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
  */

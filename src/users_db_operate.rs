@@ -2,7 +2,7 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-23 13:18:29
  * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 22:11:36
+ * @LastEditTime: 2023-12-25 01:58:28
  * @FilePath: \file-cryption\src\users_db_operate.rs
  * @Description: 用户数据库管理
  *
@@ -27,16 +27,15 @@ pub fn user_exist(users: &Vec<Account>, username: &String) -> bool {
     false
 }
 
-pub fn check_input(users: &Vec<Account>, username: &String, password: &String, level: &String) -> Result<bool, String> {
+pub fn check_input(
+    username: &String,
+    password: &String,
+    level: &String,
+) -> Result<bool, String> {
     if username.len() == 0 || password.len() == 0 {
         return Err("用户名密码不能为空".to_string());
     }
-    if username.contains(" ") || password.contains(" ") {
-
-    }
-    if user_exist(users, username) {
-        return Err("用户已存在".to_string());
-    }
+    if username.contains(" ") || password.contains(" ") {}
     // 用户等级必须是A、B、C、D、E中的一个
     if !vec!["A", "B", "C", "D", "E"].contains(&level.trim()) {
         return Err("用户等级必须是A、B、C、D、E中的一个".to_string());
@@ -44,11 +43,7 @@ pub fn check_input(users: &Vec<Account>, username: &String, password: &String, l
     Ok(true)
 }
 
-pub fn input_user(
-    username: &String,
-    password: &String,
-    level: &String,
-) -> Account {
+pub fn input_user(username: &String, password: &String, level: &String) -> Account {
     // 生成随机数, 用于加盐
     let salt = format!(
         "{}{}{}",
@@ -63,7 +58,6 @@ pub fn input_user(
     hasher.input_str(&format!("{}{}", &password.trim(), salt));
     let encoded_password = hasher.result_str();
 
-
     let user = Account {
         username: username.trim().to_string(),
         password: encoded_password.trim().to_string(),
@@ -74,10 +68,13 @@ pub fn input_user(
 }
 
 pub fn add_user(username: &String, password: &String, level: &String) -> Result<bool, String> {
-
     let mut users: Vec<Account> = read_from_database();
 
-    check_input(&users, username, password, level)?;
+    if user_exist(&users, username) {
+        return Err("用户已存在".to_string());
+    }
+
+    check_input(username, password, level)?;
 
     // 添加新用户
     let new_user = input_user(&username, &password, &level);
@@ -88,7 +85,7 @@ pub fn add_user(username: &String, password: &String, level: &String) -> Result<
     Ok(true)
 }
 
-pub fn delete_user(username: &String) -> Result<bool, String>{
+pub fn delete_user(username: &String) -> Result<bool, String> {
     let mut users: Vec<Account> = read_from_database();
 
     // 判断是否存在
@@ -103,20 +100,28 @@ pub fn delete_user(username: &String) -> Result<bool, String>{
 }
 
 // 更新用户
-pub fn update_user(username: &String, password: &String, level: &String) -> Result<bool, String> {
+pub fn update_user(
+    input_username: &String,
+    input_password: &String,
+    input_level: &String,
+    username: &String,
+) -> Result<bool, String> {
     let mut users: Vec<Account> = read_from_database();
 
-    check_input(&users, username, password, level)?;
+    check_input( input_username, input_password, input_level)?;
+
+    // 判断是否存在
+    if !user_exist(&users, &username.trim().to_string()) {
+        return Err("用户不存在".to_string());
+    }
 
     // 读取新的用户信息
-    let new_user = input_user(&username, &password, &level);
+    let new_user = input_user(&input_username, &input_password, &input_level);
 
     // 更新用户信息
     for user in &mut users {
         if user.username == username.trim().to_string() {
-            user.username = new_user.username.clone();
-            user.password = new_user.password.clone();
-            user.level = new_user.level.clone();
+            *user = new_user.clone();
         }
     }
 

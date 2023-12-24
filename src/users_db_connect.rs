@@ -2,16 +2,16 @@
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-23 18:36:00
  * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-24 22:14:18
+ * @LastEditTime: 2023-12-25 02:26:36
  * @FilePath: \file-cryption\src\users_db_connect.rs
- * @Description: 用于打开以及加密和解密的用户信息文件
+ * @Description: 用于打开以及加密和解密的用户信息json文件
  * 
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
  */
 use std::io::{Read, Write};
 use crypto::aes;
 
-use crate::{user_account::Account, users_db_operate, cbc};
+use crate::{user_account::Account, cbc};
 
 // 指定固定的密钥和IV，实际应用中需要使用安全的随机生成的密钥和IV
 const KEY256: &[u8] = b"0123456789abcdef0123456789abcdef"; // 用于256的测试密钥
