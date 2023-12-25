@@ -2,9 +2,9 @@ use crate::file::decrypt_file;
 /*
  * @Author: goodpeanuts goodpeanuts@foxmail.com
  * @Date: 2023-12-24 16:11:40
- * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-25 03:44:59
- * @FilePath: \file-cryption\src\app.rs
+ * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
+ * @LastEditTime: 2023-12-25 13:56:05
+ * @FilePath: /file_encrypt/src/app.rs
  * @Description: 程序图形化界面主体
  *
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved.
@@ -100,9 +100,6 @@ impl App {
                     }
                 }
             }
-        }
-        for file in &self.files {
-            println!("{}", file);
         }
         Ok(())
     }

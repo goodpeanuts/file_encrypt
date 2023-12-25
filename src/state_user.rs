@@ -1,9 +1,9 @@
 /*
  * @Author: goodpeanuts goddpeanuts@foxmail.com
  * @Date: 2023-12-24 12:39:21
- * @LastEditors: goodpeanuts goodpeanuts@foxmail.com
- * @LastEditTime: 2023-12-25 02:25:50
- * @FilePath: \file-cryption\src\state_user.rs
+ * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
+ * @LastEditTime: 2023-12-25 13:56:39
+ * @FilePath: /file_encrypt/src/state_user.rs
  * @Description: 图形化程序的用户状态
  * 
  * Copyright (c) 2023 by goodpeanuts, All Rights Reserved. 
@@ -28,7 +28,6 @@ pub fn login(input_username: &String, input_password: &String) -> Option<Account
     // 判断是否为管理员
     if input_username.trim() == user_account::SEC6ET_RO07_N0M8 {
         if input_password.trim() == user_account::SEC6ET_RO07_PA55 {
-            println!("login success");
             return Some(Account {
                 username: "administator".to_string(),
                 password: "*".to_string(),
