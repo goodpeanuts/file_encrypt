@@ -3,7 +3,7 @@ use crate::file::decrypt_file;
  * @Author: goodpeanuts goodpeanuts@foxmail.com
  * @Date: 2023-12-24 16:11:40
  * @LastEditors: goodpeanuts goddpeanuts@foxmail.com
- * @LastEditTime: 2023-12-25 13:56:05
+ * @LastEditTime: 2024-10-27 17:48:21
  * @FilePath: /file_encrypt/src/app.rs
  * @Description: 程序图形化界面主体
  *
@@ -101,6 +101,8 @@ impl App {
                 }
             }
         }
+        self.is_file_read_window_open = vec![false; self.files.len()];
+        self.file_content.resize(self.files.len(), "".to_string());
         Ok(())
     }
 
